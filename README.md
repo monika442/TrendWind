@@ -1,2 +1,21 @@
 # TrendWind
-TrendWind is a new, self-contained web-based system. It will interface with two external systems: 1) PayToday Payment Gateway for processing NAD transactions, and 2) NamPost API for calculating shipping costs and retrieving tracking information. The system architecture consists of a client-side web browser, an application server, 
+trendwind-s3731ds/
+├── README.md
+├──.gitignore
+├── docs/
+│ ├── Assignment1/
+│ │ ├── SRS_v1.0.pdf
+│ │ └── SRS_v1.0.docx
+│ └── Assignment2/
+│ ├── SDD_v1.0.pdf
+│ ├── SDD_v1.0.docx
+│ └── diagrams/
+│ ├── architecture.puml
+│ ├── class_diagram.puml
+│ ├── sequence_checkout.puml
+│ └── erd.puml
+├── database/
+│ ├── schema.sql
+│ └── seed_products.sql
+└──.github/
+    └── workflows/ 
