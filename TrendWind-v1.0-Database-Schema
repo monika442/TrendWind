@@ -1,0 +1,130 @@
+-- TrendWind v1.0 Database Schema
+-- Supports all FRs from Assignment 1
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    first_name VARCHAR(100),
+    last_name VARCHAR(100),
+    role VARCHAR(20) DEFAULT 'customer' CHECK (role IN ('customer','admin')),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE addresses (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    label VARCHAR(50),
+    recipient_name VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    street VARCHAR(255) NOT NULL,
+    city VARCHAR(100) NOT NULL DEFAULT 'Windhoek',
+    is_default BOOLEAN DEFAULT FALSE
+);
+
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,
+    slug VARCHAR(100) UNIQUE NOT NULL,
+    parent_id INT REFERENCES categories(id)
+);
+
+CREATE TABLE products (
+    sku VARCHAR(20) PRIMARY KEY,
+    category_id INT NOT NULL REFERENCES categories(id),
+    name VARCHAR(255) NOT NULL,
+    description TEXT,
+    price DECIMAL(10,2) NOT NULL CHECK (price > 0),
+    sale_price DECIMAL(10,2) CHECK (sale_price > 0),
+    stock INT NOT NULL DEFAULT 0 CHECK (stock >= 0),
+    sizes VARCHAR(50),
+    colors VARCHAR(100),
+    images JSONB,
+    is_active BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE carts (
+    id SERIAL PRIMARY KEY,
+    user_id INT UNIQUE REFERENCES users(id) ON DELETE CASCADE,
+    session_id VARCHAR(255) UNIQUE,
+    updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE cart_items (
+    id SERIAL PRIMARY KEY,
+    cart_id INT NOT NULL REFERENCES carts(id) ON DELETE CASCADE,
+    product_sku VARCHAR(20) NOT NULL REFERENCES products(sku),
+    quantity INT NOT NULL DEFAULT 1 CHECK (quantity > 0),
+    size VARCHAR(10) NOT NULL,
+    color VARCHAR(20) NOT NULL,
+    added_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(cart_id, product_sku, size, color)
+);
+
+CREATE TABLE coupons (
+    id SERIAL PRIMARY KEY,
+    code VARCHAR(20) UNIQUE NOT NULL,
+    type VARCHAR(20) NOT NULL CHECK (type IN ('percentage','fixed')),
+    value DECIMAL(10,2) NOT NULL,
+    min_order_amount DECIMAL(10,2) DEFAULT 0,
+    expires_at TIMESTAMPTZ,
+    is_active BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL REFERENCES users(id),
+    address_id INT NOT NULL REFERENCES addresses(id),
+    order_number VARCHAR(20) UNIQUE NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('Processing','Shipped','Delivered','Cancelled')),
+    subtotal DECIMAL(10,2) NOT NULL,
+    shipping_fee DECIMAL(10,2) NOT NULL,
+    discount_amount DECIMAL(10,2) DEFAULT 0,
+    total DECIMAL(10,2) NOT NULL,
+    coupon_code VARCHAR(20) REFERENCES coupons(code),
+    tracking_number VARCHAR(50),
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE order_items (
+    id SERIAL PRIMARY KEY,
+    order_id INT NOT NULL REFERENCES orders(id) ON DELETE CASCADE,
+    product_sku VARCHAR(20) NOT NULL REFERENCES products(sku),
+    product_name VARCHAR(255) NOT NULL,
+    size VARCHAR(10) NOT NULL,
+    color VARCHAR(20) NOT NULL,
+    quantity INT NOT NULL,
+    unit_price DECIMAL(10,2) NOT NULL,
+    total_price DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE payments (
+    id SERIAL PRIMARY KEY,
+    order_id INT UNIQUE NOT NULL REFERENCES orders(id),
+    payment_method VARCHAR(20) NOT NULL CHECK (payment_method IN ('PayToday','COD','Card')),
+    amount DECIMAL(10,2) NOT NULL,
+    status VARCHAR(20) NOT NULL CHECK (status IN ('Pending','Completed','Failed')),
+    transaction_ref VARCHAR(255),
+    paid_at TIMESTAMPTZ
+);
+
+CREATE TABLE reviews (
+    id SERIAL PRIMARY KEY,
+    product_sku VARCHAR(20) NOT NULL REFERENCES products(sku),
+    user_id INT NOT NULL REFERENCES users(id),
+    order_id INT NOT NULL REFERENCES orders(id),
+    rating INT NOT NULL CHECK (rating BETWEEN 1 AND 5),
+    title VARCHAR(100),
+    comment TEXT,
+    fit_feedback VARCHAR(20) CHECK (fit_feedback IN ('Runs Small','True to Size','Runs Large')),
+    is_verified BOOLEAN DEFAULT TRUE,
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(product_sku, user_id, order_id)
+);
+
+-- Indexes for NFR2 Performance
+CREATE INDEX idx_products_category ON products(category_id);
+CREATE INDEX idx_products_active ON products(is_active);
+CREATE INDEX idx_orders_user ON orders(user_id);
+CREATE INDEX idx_orders_status ON orders(status);
