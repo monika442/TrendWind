@@ -1,1 +1,66 @@
+INSERT INTO categories (id, name, slug) VALUES
+(1, 'Dresses', 'dresses'),
+(2, 'Tops', 'tops'),
+(3, 'Bottoms', 'bottoms'),
+(4, 'Swimwear', 'swimwear'),
+(5, 'Accessories', 'accessories'),
+(6, 'Shoes', 'shoes'),
+(7, 'Curve+Plus', 'curve-plus')
+ON CONFLICT (id) DO NOTHING;
 
+-- Step 2: Insert all 20 products
+-- Format: sku, category_id, name, description, price, sale_price, stock, sizes, colors, images
+
+INSERT INTO products (sku, category_id, name, description, price, sale_price, stock, sizes, colors, images, is_active) VALUES
+
+-- DRESSES
+('TW-DR-001', 1, 'Ribbed Bodycon Midi Dress', 'Stretch knit, square neck, side slit. True to size', 220.00, 180.00, 35, 'XS,S,M,L', 'Black,Sage,Rust', '["tw-dr-001-1.jpg","tw-dr-001-2.jpg"]', true),
+('TW-DR-002', 1, 'Floral Wrap Mini Dress', 'V-neck, ruffle hem, tie waist. Runs small, size up', 250.00, NULL, 20, 'S,M,L,XL', 'Pink Floral,Blue Floral', '["tw-dr-002-1.jpg"]', true),
+('TW-DR-003', 1, 'Satin Slip Maxi Dress', 'Cowl neck, bias cut. Perfect for events', 280.00, 199.00, 15, 'S,M,L', 'Champagne,Emerald', '["tw-dr-003-1.jpg"]', true),
+
+-- TOPS
+('TW-TP-004', 2, 'Cropped Rib Knit Tank', 'Basic staple, stretch fit', 120.00, NULL, 60, 'XS,S,M,L,XL', 'White,Black,Lilac', '["tw-tp-004-1.jpg"]', true),
+('TW-TP-005', 2, 'Mesh Graphic Mesh Top', 'Y2K style, see-through mesh overlay', 160.00, 130.00, 25, 'S,M,L', 'Black "Angel",White "Y2K"', '["tw-tp-005-1.jpg"]', true),
+('TW-TP-006', 2, 'Oversized Campus Tee', 'UNAM student fave, drop shoulder, 100% cotton', 180.00, NULL, 40, 'S,M,L,XL', 'Grey Marl,Navy,Cream', '["tw-tp-006-1.jpg"]', true),
+('TW-TP-018', 2, 'Knit Button Cardigan', 'Cropped, pearl buttons, soft acrylic', 280.00, 229.00, 16, 'S,M,L,XL', 'Cream,Baby Blue', '["tw-tp-018-1.jpg"]', true),
+
+-- BOTTOMS
+('TW-BT-007', 3, 'High-Waist Cargo Parachute Pants', 'Wide leg, adjustable hem, 6 pockets', 320.00, 279.00, 18, 'XS,S,M,L', 'Khaki,Black,Stone', '["tw-bt-007-1.jpg"]', true),
+('TW-BT-008', 3, 'Faux Leather Mini Skirt', 'A-line, side zip, lined', 200.00, NULL, 22, 'XS,S,M,L', 'Black,Brown', '["tw-bt-008-1.jpg"]', true),
+('TW-BT-009', 3, 'Wide Leg Pleated Trousers', 'High waist, front pleats, office to campus', 290.00, NULL, 15, 'S,M,L,XL', 'Beige,Black,Sage', '["tw-bt-009-1.jpg"]', true),
+('TW-BT-010', 3, 'Denim Micro Shorts', 'Raw hem, high rise, 3" inseam', 180.00, 149.00, 30, '24,26,28,30,32', 'Light Wash,Black', '["tw-bt-010-1.jpg"]', true),
+
+-- SWIMWEAR
+('TW-SW-011', 4, 'Cut-Out One Piece Swimsuit', 'Front cut-out, removable pads, full coverage back', 260.00, NULL, 12, 'S,M,L,XL', 'Black,Hot Pink', '["tw-sw-011-1.jpg"]', true),
+('TW-SW-012', 4, 'Triangle Bikini Set', 'Tie sides, adjustable top', 240.00, 199.00, 20, 'S,M,L', 'Leopard,Turquoise,White', '["tw-sw-012-1.jpg"]', true),
+
+-- ACCESSORIES
+('TW-AC-013', 5, 'Chunky Gold Hoop Earrings', 'Lightweight, 40mm diameter, hypoallergenic', 90.00, NULL, 50, 'One Size', 'Gold', '["tw-ac-013-1.jpg"]', true),
+('TW-AC-014', 5, 'Mini Shoulder Bag', 'PU leather, zip closure, Y2K style', 180.00, 149.00, 25, 'One Size', 'Black,Cream,Green', '["tw-ac-014-1.jpg"]', true),
+('TW-AC-015', 5, 'Tinted Rectangle Sunglasses', 'UV400 protection, 90s vibe', 120.00, NULL, 35, 'One Size', 'Black,Pink,Blue', '["tw-ac-015-1.jpg"]', true),
+
+-- SHOES
+('TW-SH-016', 6, 'Platform Chunky Sneakers', '5cm platform, lace-up, campus essential', 450.00, 399.00, 14, '3,4,5,6,7,8', 'White/Gum,Black', '["tw-sh-016-1.jpg"]', true),
+('TW-SH-017', 6, 'Strappy Heeled Sandals', '7cm heel, ankle strap, minimal', 320.00, NULL, 10, '3,4,5,6,7', 'Nude,Black', '["tw-sh-017-1.jpg"]', true),
+
+-- CURVE+PLUS
+('TW-CV-019', 7, 'Plus Curve Ruffle Hem Top', 'Peplum fit, stretch fabric', 190.00, NULL, 18, '1XL,2XL,3XL', 'Black,Wine', '["tw-cv-019-1.jpg"]', true),
+('TW-CV-020', 7, 'Plus High Waist Flare Jeans', 'Stretch denim, 5-pocket, flare leg', 380.00, 329.00, 12, '14,16,18,20', 'Mid Wash', '["tw-cv-020-1.jpg"]', true)
+
+ON CONFLICT (sku) DO UPDATE SET
+    price = EXCLUDED.price,
+    sale_price = EXCLUDED.sale_price,
+    stock = EXCLUDED.stock,
+    is_active = EXCLUDED.is_active;
+
+-- Step 3: Sample coupon for FR3.3 testing
+INSERT INTO coupons (code, type, value, min_order_amount, expires_at, is_active) VALUES
+('WELCOME10', 'percentage', 10.00, 100.00, '2026-12-31 23:59:59+02', true),
+('STUDENT20', 'fixed', 20.00, 150.00, '2026-12-31 23:59:59+02', true)
+ON CONFLICT (code) DO NOTHING;
+
+-- Step 4: Create admin user for testing FR4.3
+INSERT INTO users (email, password_hash, first_name, last_name, role) VALUES
+('admin@trendwind.na', '$2b$10$examplehashforbcryptNFR1', 'Admin', 'TrendWind', 'admin'),
+('test@unam.na', '$2b$10$examplehashforbcryptNFR1', 'Test', 'Student', 'customer')
+ON CONFLICT (email) DO NOTHING;
