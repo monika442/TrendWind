@@ -1,0 +1,21 @@
+# TrendWind E-Commerce Platform v1.0
+
+Course: S3731DS & CMP3731 - Software Engineering
+Course Code: 33BCMP
+University: University of Namibia
+
+Group Members:
+1. David M.N - 224109243
+2. Coetzee A.D - 220082480
+3. Iiyambo K.T - 218212324
+4. Iyambo J.N - 222086459
+
+Description:
+B2C e-commerce web application specializing in women's fast-fashion for Namibia.
+Supports PayToday, Card, and COD payments. Built with React, Node.js, PostgreSQL.
+
+Assignments:
+- A1: Software Requirements Specification - /docs/Assignment1/
+- A2: Software Design Document - /docs/Assignment2/
+- A3: Implementation - /frontend + /backend [Coming]
+- A4: Testing - /docs/Assignment4/ [Coming]
