@@ -1,0 +1,1 @@
+setInterval(() => console.log('still alive'), 1000);
